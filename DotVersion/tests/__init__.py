@@ -37,6 +37,8 @@ class DotVersionCase(unittest.TestCase):
         self.assertLessEqual( DotVersion("1.0.1") , DotVersion("1.0.1"))
         self.assertGreaterEqual( DotVersion("1.0.1") , DotVersion("1.0.1.0"))
         self.assertLessEqual( DotVersion("1.0.1") , DotVersion("1.0.1.1"))
+        ## For some reason this one is passing
+        self.assertFalse( DotVersion("1.0") < DotVersion("0.1"))
         try:
             self.assertGreaterEqual( DotVersion("1.0.1") , DotVersion("1.0.1.1"))
         except AssertionError: pass
