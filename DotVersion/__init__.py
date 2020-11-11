@@ -42,26 +42,32 @@ class DotVersion():
     def __eq__(self,other):
         if isinstance(other,DotVersion):
             for v1,v2 in itertools.zip_longest(self.expanded,other.expanded,fillvalue = 0):
+                ## If any pairing doesn't match, the DotVersions are not equal
                 if v1!=v2: return False
             return True
+        return NotImplemented
     @caststring_factory
     def __lt__(self,other):
         if isinstance(other,DotVersion):
             for v1,v2 in itertools.zip_longest(self.expanded,other.expanded,fillvalue = 0):
+                ## If v1 is greater than v2 (wherever it is), then the whole DotVersion is not Less
+                if v1 > v2: return False
+                ## If v1  is less than v2 (wherever it is), then the whole DotVersion is less
                 if v1 < v2: return True
+                ## The alternative is that the current index is the same,
+                ## in which case continue to the next index
             return False
         return NotImplemented
     @caststring_factory
     def __le__(self,other):
-        if isinstance(other,DotVersion):
-            for v1,v2 in itertools.zip_longest(self.expanded,other.expanded,fillvalue = 0):
-                if v1 > v2: return False
-            return True
-        return NotImplemented
+        op_result = self == other
+        return op_result if op_result is NotImplemented else op_result or self < other
     def __gt__(self,other):
-        return not self <= other
+        op_result = self <= other
+        return op_result if op_result is NotImplemented else not op_result
     def __ge__(self,other):
-        return not self < other
+        op_result = self < other
+        return op_result if op_result is NotImplemented else not op_result
     @caststring_factory
     def __add__(self,other):
         if isinstance(other,DotVersion):
@@ -69,6 +75,7 @@ class DotVersion():
             for v1,v2 in itertools.zip_longest(self.expanded, other.expanded, fillvalue = 0):
                 out.append(str(v1+v2))
             return DotVersion(".".join(out))
+        return NotImplemented
     @caststring_factory
     def __radd__(self,other):
         return self + other
